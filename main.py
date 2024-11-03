@@ -51,30 +51,40 @@ class InsertDialogue(QDialog):
         layout = QVBoxLayout()
 
         #add studentname widget
-        student_name = QLineEdit()
-        student_name.setPlaceholderText("Name")
-        layout.addWidget(student_name)
+        self.student_name = QLineEdit()
+        self.student_name.setPlaceholderText("Name")
+        layout.addWidget(self.student_name)
 
         #add combo box widget
-        course_name = QComboBox()
+        self.course_name = QComboBox()
         courses = ["Biology", "Math", "Astronomy", "Physics"]
-        course_name.addItems(courses)
-        layout.addWidget(course_name)
+        self.course_name.addItems(courses)
+        layout.addWidget(self.course_name)
 
         #add mobile number widget
-        mobileNo = QLineEdit()
-        mobileNo.setPlaceholderText("Mobile No.")
-        layout.addWidget(mobileNo)
+        self.mobileNo = QLineEdit()
+        self.mobileNo.setPlaceholderText("Mobile No.")
+        layout.addWidget(self.mobileNo)
         
         #add "register" button
         button = QPushButton("Register")
         button.clicked.connect(self.add_student)
+        layout.addWidget(button)
 
         self.setLayout(layout)
 
     def add_student(self):
-        pass
-
+        name = self.student_name.text()
+        course = self.course_name.itemText(self.course_name.currentIndex())
+        mobileNo = self.mobileNo.text()
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO students (name,course,mobile) VALUES (?,?,?)",
+                       (name,course,mobileNo))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        age_calculator.load_data()
 
 app = QApplication(sys.argv)
 age_calculator = MainWindow()
