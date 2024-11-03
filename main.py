@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
 
         about_action = QAction("About", self)
         help_menu_item.addAction(about_action)
+        about_action.triggered.connect(self.about)
         
         search_action = QAction(QIcon("icons/search.png"),"Search", self)
         edit_menu_item.addAction(search_action)
@@ -85,6 +86,22 @@ class MainWindow(QMainWindow):
     def delete(self):
         delete = DeleteDialogue()
         delete.exec()
+    
+    def about(self):
+        dialogue = AboutDialogue()
+        dialogue.exec()
+
+
+class AboutDialogue(QMessageBox):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("About")
+        content = """
+        This app was created to help practise OOP in python
+        and learn how to use the PyQT6 library to create 
+        responsive GUI elements.
+        """
+        self.setText(content)
 
 
 class DeleteDialogue(QDialog):
@@ -120,7 +137,6 @@ class DeleteDialogue(QDialog):
         confirmation_widget.setWindowTitle("Success")
         confirmation_widget.setText("Student deleted successfully!")
         confirmation_widget.exec()
-
 
 
 class EditDialogue(QDialog):
