@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QLabel, QWidget, QGridLayout, \
-     QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem
+     QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
+     QVBoxLayout, QComboBox
 from PyQt6.QtGui import QAction
 import sys
 import sqlite3
@@ -13,6 +14,7 @@ class MainWindow(QMainWindow):
         help_menu_item = self.menuBar().addMenu("&Help")
 
         add_student_action = QAction("Add Student", self)
+        add_student_action.triggered.connect(self.insert)
         file_menu_item.addAction(add_student_action)
 
         about_action = QAction("About", self)
@@ -35,6 +37,43 @@ class MainWindow(QMainWindow):
                 self.table.setItem(row_number,column_number,QTableWidgetItem(str(data)))
         connection.close()
 
+    def insert(self):
+        dialogue = InsertDialogue()
+        dialogue.exec()
+
+class InsertDialogue(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Insert Student Data")
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+
+        layout = QVBoxLayout()
+
+        #add studentname widget
+        student_name = QLineEdit()
+        student_name.setPlaceholderText("Name")
+        layout.addWidget(student_name)
+
+        #add combo box widget
+        course_name = QComboBox()
+        courses = ["Biology", "Math", "Astronomy", "Physics"]
+        course_name.addItems(courses)
+        layout.addWidget(course_name)
+
+        #add mobile number widget
+        mobileNo = QLineEdit()
+        mobileNo.setPlaceholderText("Mobile No.")
+        layout.addWidget(mobileNo)
+        
+        #add "register" button
+        button = QPushButton("Register")
+        button.clicked.connect(self.add_student)
+
+        self.setLayout(layout)
+
+    def add_student(self):
+        pass
 
 
 app = QApplication(sys.argv)
