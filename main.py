@@ -60,6 +60,60 @@ class MainWindow(QMainWindow):
         search = SearchDialogue()
         search.exec()
 
+class EditDialogue(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Update Student Data")
+        self.setFixedWidth(300)
+        self.setFixedHeight(300)
+
+        layout = QVBoxLayout()
+
+        index = main_window.table.currentRow()
+        student_name = main_window.table.item(index, 1).text()
+        self.student_id = main_window.table.item(index, 0).text()
+
+        #add studentname widget
+        self.student_name = QLineEdit()
+        self.student_name.setPlaceholderText(student_name)
+        layout.addWidget(self.student_name)
+
+        #add combo box widget
+        course_name = main_window.table.item(index, 2).text()
+        self.course_name = QComboBox()
+        courses = ["Biology", "Math", "Astronomy", "Physics"]
+        self.course_name.addItems(courses)
+        self.course_name.setCurrentText(course_name)
+        layout.addWidget(self.course_name)
+
+        #add mobile number widget
+        self.mobileNo = QLineEdit()
+        mobileNo = main_window.table.item(index, 3).text()
+        self.mobileNo.setPlaceholderText(mobileNo)
+        layout.addWidget(self.mobileNo)
+        
+        #add "register" button
+        button = QPushButton("Confirm")
+        button.clicked.connect(self.update_student)
+        layout.addWidget(button)
+
+        self.setLayout(layout)
+    
+    def update_student(self):
+        connection = sqlite3.connect("database.db")
+        cursor = connection.cursor()
+        name = self.student_name.text()
+        course = self.course_name.itemText(self.course_name.currentIndex())
+        mobileNo = self.mobileNo.text()
+
+        cursor.execute("UPDATE students SET name = ?, course = ?, mobile = ? WHERE id = ?",
+                       (name, course, mobileNo, self.student_id))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        main_window.load_data()
+        
+
 class InsertDialogue(QDialog):
     def __init__(self):
         super().__init__()
