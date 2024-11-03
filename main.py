@@ -1,7 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QLabel, QWidget, QGridLayout, \
      QLineEdit, QPushButton, QMainWindow, QTableWidget, QTableWidgetItem, QDialog, \
-     QVBoxLayout, QComboBox, QToolBar
+     QVBoxLayout, QComboBox, QToolBar, QStatusBar
 from PyQt6.QtGui import QAction, QIcon
 import sys
 import sqlite3
@@ -41,6 +41,24 @@ class MainWindow(QMainWindow):
         toolbar.addAction(add_student_action)
         toolbar.addAction(search_action)
 
+        self.statusbar = QStatusBar()
+        self.setStatusBar(self.statusbar)
+        self.table.cellClicked.connect(self.cell_clicked)
+
+    def cell_clicked(self):
+        edit_button = QPushButton("Edit Record")
+        edit_button.clicked.connect(self.edit)
+
+        delete_button = QPushButton("Delete Record")
+        delete_button.clicked.connect(self.edit)
+
+        children = self.findChildren(QPushButton)
+        if children:
+            for child in children:
+                self.statusbar.removeWidget(child)
+
+        self.statusbar.addWidget(edit_button)
+        self.statusbar.addWidget(delete_button)
 
     def load_data(self):
         connection = sqlite3.connect("database.db")
@@ -59,6 +77,19 @@ class MainWindow(QMainWindow):
     def search(self):
         search = SearchDialogue()
         search.exec()
+
+    def edit(self):
+        edit = EditDialogue()
+        edit.exec()
+
+    def delete(self):
+        delete = DeleteDialogue()
+        delete.exec()
+
+
+class DeleteDialogue(QDialog):
+    pass
+
 
 class EditDialogue(QDialog):
     def __init__(self):
@@ -158,6 +189,7 @@ class InsertDialogue(QDialog):
         cursor.close()
         connection.close()
         main_window.load_data()
+
 
 class SearchDialogue(QDialog):
     def __init__(self):
