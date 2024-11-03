@@ -1,46 +1,33 @@
 from PyQt6.QtWidgets import QApplication, QVBoxLayout, QLabel, QWidget, QGridLayout, \
-     QLineEdit, QPushButton
+     QLineEdit, QPushButton, QMainWindow, QTableWidget
+from PyQt6.QtGui import QAction
 import sys
-from datetime import datetime
 
-
-class AgeCalculator(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Age Calculator")
-        grid = QGridLayout()
+        self.setWindowTitle("Student Management System")
 
-        #creates widgets
-        name_label = QLabel("Name:")
-        self.name_line_edit = QLineEdit()
+        file_menu_item = self.menuBar().addMenu("&File")
+        help_menu_item = self.menuBar().addMenu("&Help")
 
-        date_birth_label = QLabel("Date of Birth DD/MM/YYYY:")
-        self.date_birth_label_edit = QLineEdit()
+        add_student_action = QAction("Add Student", self)
+        file_menu_item.addAction(add_student_action)
 
-        calculate_button = QPushButton("Calculate")
-        calculate_button.clicked.connect(self.calculate_age)
-        self.output_label = QLabel("")
+        about_action = QAction("About", self)
+        help_menu_item.addAction(about_action)
 
-        #adds widgets to a grid
-        grid.addWidget(name_label, 0, 0)
-        grid.addWidget(self.name_line_edit, 0, 1)
-        grid.addWidget(date_birth_label, 1, 0)
-        grid.addWidget(self.date_birth_label_edit, 1, 1)
-        grid.addWidget(calculate_button, 2, 0, 1, 2)
-        grid.addWidget(self.output_label, 3, 0, 1, 2)
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(("Id","Name","Course","Mobile No."))
+        self.setCentralWidget(self.table)
+
+    def load_data(self):
+        pass
 
 
-        self.setLayout(grid)
-
-    def calculate_age(self):
-        current_year = datetime.now().year
-        birth_date = self.date_birth_label_edit.text()
-        birth_year = datetime.strptime(birth_date, "%d/%m/%Y").date().year
-
-        age = current_year - birth_year
-        self.output_label.setText(f"{self.name_line_edit.text()} is {age} years old.")
 
 app = QApplication(sys.argv)
-age_calculator = AgeCalculator()
+age_calculator = MainWindow()
 age_calculator.show()
 sys.exit(app.exec())
